@@ -1,0 +1,57 @@
+h1. Small Dijkstra example using "Neo4j":http://neo4j.org/
+
+!http://github.com/neo4j-examples/java-dijkstra/raw/master/src/main/model/nodespace.png!
+
+
+*Requirements*
+
+To execute the project, Java 5+ is needed.
+
+
+*Download packages*
+
+There's download packages located here:
+"m2.neo4j.org/...java-dijkstra...":http://m2.neo4j.org/org/neo4j/examples/java-dijkstra/1.0.0-SNAPSHOT/
+Look for files ending in .zip or .tar.gz
+
+
+*Contents of the download package*
+
+| @bin/@ | start script for the application in Unix and Windows format |
+| @docs/@ | javadoc of all Neo4j component dependencies of the project |
+| @lib/@ | all dependency jars of the project |
+| @lib/report@ | dependency report including license information |
+| @src/@ | source code of the project |
+
+
+*Run from download package*
+
+Simply start the corresponding script in the @bin/@ directory. For example:
+@$ ./bin/dijkstra@ 
+
+
+*Run from source*
+
+_Using JDK:_
+ Use the download package and add the lib/ directory
+ to the project classpath ("build path" in Eclipse).
+ In this case, only JDK 1.6 is required to run the code
+ from source.
+
+_Using JDK + Maven:_
+Checkout or download the source code from GitHub and use the Maven2
+ setup originally used for the project. This option requires
+ JDK 1.5 and Maven2 to be installed, see:  "Java Setup":http://wiki.neo4j.org/content/Java_Setup_HowTo
+ With Maven2 installed, simply issue the following command
+ at the command prompt:
+ @$ mvn clean compile exec:java -Dexec.mainClass="org.neo4j.examples.dijkstra.DijkstraExample"@
+ This command will download all dependencies which are needed on the first run.
+
+
+*Sample output*
+
+found path (1)--<REL,2]-->(4)--<REL,3]-->(5)--<REL,4]-->(3) weight:11.0
+s
+a
+b
+e
