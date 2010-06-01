@@ -8,6 +8,12 @@ import org.neo4j.index.IndexService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.util.GraphDatabaseLifecycle;
 
+/**
+ * Wrapper around Neo4j every node has a name. Nodes are created lazily when
+ * relationships are created.
+ * 
+ * @author Anders Nawroth
+ */
 public class ExampleGraphService
 {
     public enum MyDijkstraTypes implements RelationshipType
@@ -21,30 +27,45 @@ public class ExampleGraphService
     private final GraphDatabaseLifecycle lifecycle;
     private final IndexService index;
 
-    public ExampleGraphService()
+    /**
+     * Create new or open existing DB.
+     * 
+     * @param storeDir location of DB files
+     */
+    public ExampleGraphService( final String storeDir )
     {
-        graphDb = new EmbeddedGraphDatabase( "target/neo4j-db" );
+        graphDb = new EmbeddedGraphDatabase( storeDir );
         lifecycle = new GraphDatabaseLifecycle( graphDb );
         lifecycle.addLuceneIndexService();
         index = lifecycle.indexService();
     }
 
-    public void makeEdge( final String firstNodeName,
-            final String secondNodeName, final String propertyName,
-            final double cost )
+    /**
+     * Create relationship between two nodes and set a property on the
+     * relationship. Note that the propertyValue has to be a Java primitive or
+     * String or an array of either Java primitives or Strings.
+     * 
+     * @param fromNodeName start node
+     * @param toNodeName end node
+     * @param propertyName
+     * @param propertyValue
+     */
+    public void createRelationship( final String fromNodeName,
+            final String toNodeName, final String propertyName,
+            final Object propertyValue )
     {
         Transaction tx = graphDb.beginTx();
 
         try
         {
             // find/create nodes
-            Node firstNode = findOrCreateNode( firstNodeName );
-            Node secondNode = findOrCreateNode( secondNodeName );
+            Node firstNode = findOrCreateNode( fromNodeName );
+            Node secondNode = findOrCreateNode( toNodeName );
 
             // add relationship
             Relationship rel = firstNode.createRelationshipTo( secondNode,
                     MyDijkstraTypes.REL );
-            rel.setProperty( propertyName, cost );
+            rel.setProperty( propertyName, propertyValue );
 
             tx.success();
         }
@@ -58,11 +79,23 @@ public class ExampleGraphService
         }
     }
 
+    /**
+     * Get a node by its name.
+     * 
+     * @param name
+     * @return
+     */
     public Node getNode( final String name )
     {
         return index.getSingleNode( NAME, name );
     }
 
+    /**
+     * Find a node or create a new node if it doesn't exist.
+     * 
+     * @param nodeName
+     * @return
+     */
     private Node findOrCreateNode( final String nodeName )
     {
         Node node = getNode( nodeName );
@@ -75,6 +108,9 @@ public class ExampleGraphService
         return node;
     }
 
+    /**
+     * Shutdown service.
+     */
     public void shutdown()
     {
         lifecycle.manualShutdown();

@@ -9,6 +9,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipExpander;
 import org.neo4j.kernel.TraversalFactory;
 
+/**
+ * Simple example of how to find the cheapest path between two nodes in a graph.
+ * 
+ * @author Anders Nawroth
+ */
 public class DijkstraExample
 {
     private final ExampleGraphService graph;
@@ -20,6 +25,7 @@ public class DijkstraExample
 
     static
     {
+        // set up path finder
         expander = TraversalFactory.expanderForTypes(
                 ExampleGraphService.MyDijkstraTypes.REL, Direction.BOTH );
         costEvaluator = new DoubleEvaluator( COST );
@@ -28,18 +34,24 @@ public class DijkstraExample
 
     public DijkstraExample()
     {
-        graph = new ExampleGraphService();
+        graph = new ExampleGraphService( "target/neo4j-db" );
     }
 
+    /**
+     * Create our example graph.
+     */
     private void createGraph()
     {
-        graph.makeEdge( "s", "c", COST, 7 );
-        graph.makeEdge( "c", "e", COST, 7 );
-        graph.makeEdge( "s", "a", COST, 2 );
-        graph.makeEdge( "a", "b", COST, 7 );
-        graph.makeEdge( "b", "e", COST, 2 );
+        graph.createRelationship( "s", "c", COST, 7d );
+        graph.createRelationship( "c", "e", COST, 7d );
+        graph.createRelationship( "s", "a", COST, 2d );
+        graph.createRelationship( "a", "b", COST, 7d );
+        graph.createRelationship( "b", "e", COST, 2d );
     }
 
+    /**
+     * Find the path.
+     */
     private void runDijkstraPathFinder()
     {
         Node start = graph.getNode( "s" );
@@ -51,11 +63,19 @@ public class DijkstraExample
         }
     }
 
+    /**
+     * Shutdown the graphdb.
+     */
     private void shutdown()
     {
         graph.shutdown();
     }
 
+    /**
+     * Execute the example.
+     * 
+     * @param args
+     */
     public static void main( final String[] args )
     {
         DijkstraExample de = new DijkstraExample();
