@@ -1,9 +1,10 @@
 package org.neo4j.examples.dijkstra;
 
+import org.neo4j.graphalgo.CommonEvaluators;
+import org.neo4j.graphalgo.CostEvaluator;
+import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
-import org.neo4j.graphalgo.path.Dijkstra;
-import org.neo4j.graphalgo.path.WeightedPath;
-import org.neo4j.graphalgo.util.DoubleEvaluator;
+import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipExpander;
@@ -20,7 +21,7 @@ public class DijkstraExample
 
     private static final String COST = "cost";
     private static final RelationshipExpander expander;
-    private static final DoubleEvaluator costEvaluator;
+    private static final CostEvaluator<Double> costEvaluator;
     private static final PathFinder<WeightedPath> dijkstraPathFinder;
 
     static
@@ -28,8 +29,8 @@ public class DijkstraExample
         // set up path finder
         expander = TraversalFactory.expanderForTypes(
                 ExampleGraphService.MyDijkstraTypes.REL, Direction.BOTH );
-        costEvaluator = new DoubleEvaluator( COST );
-        dijkstraPathFinder = new Dijkstra( expander, costEvaluator );
+        costEvaluator = CommonEvaluators.doubleCostEvaluator( COST );
+        dijkstraPathFinder = GraphAlgoFactory.dijkstra( expander, costEvaluator );
     }
 
     public DijkstraExample()
