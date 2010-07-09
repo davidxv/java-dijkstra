@@ -8,7 +8,7 @@ import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipExpander;
-import org.neo4j.kernel.TraversalFactory;
+import org.neo4j.kernel.Traversal;
 
 /**
  * Simple example of how to find the cheapest path between two nodes in a graph.
@@ -27,7 +27,7 @@ public class DijkstraExample
     static
     {
         // set up path finder
-        expander = TraversalFactory.expanderForTypes(
+        expander = Traversal.expanderForTypes(
                 ExampleGraphService.MyDijkstraTypes.REL, Direction.BOTH );
         costEvaluator = CommonEvaluators.doubleCostEvaluator( COST );
         dijkstraPathFinder = GraphAlgoFactory.dijkstra( expander, costEvaluator );
